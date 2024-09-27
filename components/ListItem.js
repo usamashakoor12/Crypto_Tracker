@@ -1,12 +1,12 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
 
-export default function ListItem({name, symbol,currentPrice,priceChangePercentage7d,logo}) {
+export default function ListItem({name, symbol,currentPrice,priceChangePercentage7d,logo, onPress}) {
 
     const priceChangeColor = priceChangePercentage7d > 0 ? 'text-green-400' : 'text-red-400'
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <View className="px-5 mt-6 flex-row justify-between items-center">
         <View className="flex-row items-center">
           <Image source={{uri:logo}} className="h-12 w-12" />
