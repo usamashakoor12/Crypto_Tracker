@@ -1,18 +1,24 @@
-import { View, Text, FlatList, SafeAreaView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
 import React, { useRef, useState } from "react";
-import Modal from 'react-native-modal';
+import BottomSheet from "react-native-simple-bottom-sheet";
 import Header from "./components/Header";
 import ListItem from "./components/ListItem";
 import { SAMPLE_DATA } from "./assets/data/SampleData";
 import Chart from "./components/Chart";
 
 export default function App() {
-  const [isModalVisible, setModalVisible] = useState(false); 
-  const [selectedCoisns, setSelectedCoins] = useState(false); 
+  const [selectedCoin, setSelectedCoin] = useState(null);
+  const panelRef = useRef(null); 
 
   const toggleModal = (item) => {
-    setSelectedCoins(item)
-    setModalVisible(!isModalVisible);
+    setSelectedCoin(item);
+    panelRef.current.togglePanel();
   };
 
   return (
@@ -21,40 +27,36 @@ export default function App() {
         keyExtractor={(item) => item.id}
         data={SAMPLE_DATA}
         renderItem={({ item }) => (
-          
-            <ListItem
-              name={item.name}
-              symbol={item.symbol}
-              currentPrice={item.current_price}
-              priceChangePercentage7d={item.price_change_percentage_7d_in_currency}
-              logo={item.image}
-              onPress={()=>toggleModal(item)}
-            />
+          <ListItem
+            name={item.name}
+            symbol={item.symbol}
+            currentPrice={item.current_price}
+            priceChangePercentage7d={
+              item.price_change_percentage_7d_in_currency
+            }
+            logo={item.image}
+            onPress={() => toggleModal(item)}
+          />
         )}
         ListHeaderComponent={<Header />}
       />
 
-      <Modal 
-        isVisible={isModalVisible} 
-        onBackdropPress={toggleModal} 
-        style={{ justifyContent: 'flex-end', margin: 0 }} 
-      >
-        <View style={{ backgroundColor: 'white', padding: 20 }}>
-          <Text style={{ paddingVertical: 20 }}>
-            { selectedCoisns ? 
-              <Chart 
-              name={selectedCoisns.name}
-              currentPrice={selectedCoisns.current_price}
-              priceChangePercentage7d={selectedCoisns.price_change_percentage_7d_in_currency}
-              logo={selectedCoisns.image}
-              symbol={selectedCoisns.symbol}
-             sparkLine={selectedCoisns. sparkline_in_7d}
-             /> : null
+     
+      <BottomSheet ref={panelRef}>
+        {selectedCoin ? (
+          <Chart
+            name={selectedCoin.name}
+            currentPrice={selectedCoin.current_price}
+            priceChangePercentage7d={
+              selectedCoin.price_change_percentage_7d_in_currency
             }
-           
-          </Text>
-        </View>
-      </Modal>
+            logo={selectedCoin.image}
+            symbol={selectedCoin.symbol}
+            sparkLine={selectedCoin.sparkline_in_7d}
+          />
+        ) : null
+        }
+      </BottomSheet>
     </SafeAreaView>
   );
 }
